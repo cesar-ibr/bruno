@@ -1,0 +1,10 @@
+# Settings
+node_modules
+*.todo
+todo.md
+.env
+.env.*
+.DS_Store
+
+# App
+voice_notes
