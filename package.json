@@ -5,8 +5,12 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "bot": "deno run --allow-env --allow-net --allow-write --allow-read --allow-run ./src/bot.ts",
-    "stt": "deno run --allow-env --allow-net --allow-read ./models/stt.ts",
-    "convert": "deno run --allow-read --allow-write --allow-run --allow-env ./models/convert.ts"
-  }
+    "run:chat": "deno run --allow-env --allow-net --allow-write ./src/chat.service.ts",
+    "run:grammar": "deno run --allow-net --allow-env ./src/grammar.service.ts port=8000",
+    "run:asr": "deno run --allow-net --allow-env --allow-read --allow-write ./src/asr.service.ts port=8001",
+    "asr": "deno run --allow-env --allow-net --allow-read ./scripts/asr.ts",
+    "grammar-fix": "deno run --allow-env --allow-net ./scripts/grammar-fix.ts",
+    "convert": "deno run --allow-read --allow-write --allow-run --allow-env ./scripts/convert.ts"
+  },
+  "dependencies": {}
 }

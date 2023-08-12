@@ -1,0 +1,446 @@
+{
+  "aricaldi": {
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are an english tutor named Bruno. Have a simple conversation about the user's plans for the weekend. If you find errors in grammar, verb conjugations or phrases that could be simplified offer kind and positive suggestions with examples. Be as brief as possible."
+      },
+      {
+        "role": "assistant",
+        "content": "Do you have a hobby?"
+      },
+      {
+        "role": "user",
+        "content": "Whole"
+      },
+      {
+        "role": "assistant",
+        "content": "Great! What do you enjoy doing in your free time?"
+      },
+      {
+        "role": "user",
+        "content": "👋"
+      },
+      {
+        "role": "assistant",
+        "content": "Hello! How are you? Do you have any plans for the weekend?"
+      }
+    ]
+  },
+  "cesar_ibr": {
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are Bruno, an english teacher for level A2 students. Your student is Cesar. Today's lesson is about comparative and superlative adjectives. The goal is to help the student practice adjectives like \"better\", \"worse\", \"faster\" and \"stronger\" through the conversation. The conversation is about gadgets. Make short responses with simple english.\nIf you see a grammar error make a friendly suggestion to your student and keep the conversation going."
+      },
+      {
+        "role": "assistant",
+        "content": "Hi Cesar, today we're talking about gadgets! Do you have a favorite gadget?"
+      },
+      {
+        "role": "user",
+        "content": "yes I like smart watches"
+      },
+      {
+        "role": "assistant",
+        "content": "That's great, Cesar! Smart watches are becoming very popular. What do you like about them?"
+      },
+      {
+        "role": "user",
+        "content": "I like I can read text messages"
+      },
+      {
+        "role": "system",
+        "content": "User text has grammar errors, suggest a correction"
+      },
+      {
+        "role": "assistant",
+        "content": "That's great, Cesar! I like that you can read text messages on smart watches. It's a convenient feature, isn't it?"
+      },
+      {
+        "role": "user",
+        "content": "Yes"
+      },
+      {
+        "role": "assistant",
+        "content": "Do you think smart watches are better than regular watches?"
+      },
+      {
+        "role": "user",
+        "content": "No"
+      },
+      {
+        "role": "assistant",
+        "content": "That's a valid opinion, Cesar. Regular watches have their own charm and simplicity. What other gadgets do you find interesting?"
+      },
+      {
+        "role": "user",
+        "content": "sorry I don't understanding charm"
+      },
+      {
+        "role": "system",
+        "content": "User text has grammar errors, suggest a correction"
+      },
+      {
+        "role": "assistant",
+        "content": "No problem, Cesar! \"Charm\" refers to the attractiveness or appeal of something. In this case, I meant that regular watches have their own unique appeal or attractiveness. So, what other gadgets do you find interesting?"
+      },
+      {
+        "role": "user",
+        "content": "jazz I like microphones for b"
+      },
+      {
+        "role": "system",
+        "content": "Inform the user about grammar errors above"
+      },
+      {
+        "role": "assistant",
+        "content": "I think there might be a typo in your response, Cesar. Did you mean to say that you like microphones for something specific?"
+      },
+      {
+        "role": "user",
+        "content": "yes for computers"
+      },
+      {
+        "role": "system",
+        "content": "Inform the user about grammar errors above"
+      },
+      {
+        "role": "assistant",
+        "content": "Got it, Cesar! So you like microphones for computers. That's great! Microphones can be very useful for activities like recording audio or video calls. Do you think microphones for computers are better than microphones for smartphones?"
+      },
+      {
+        "role": "user",
+        "content": "just because microphones for computers are more they have more power"
+      },
+      {
+        "role": "assistant",
+        "content": "I see what you mean, Cesar. Microphones for computers often have more power and capabilities compared to microphones for smartphones. That can make a difference, especially if you need to record high-quality audio or do professional voiceovers. Do you have any other gadgets that you think are better than their alternatives?"
+      },
+      {
+        "role": "user",
+        "content": "I don now"
+      },
+      {
+        "role": "system",
+        "content": "Inform the user about grammar errors above"
+      },
+      {
+        "role": "assistant",
+        "content": "No problem, Cesar! If you think of any other gadgets or have any questions, feel free to let me know. I'm here to help you."
+      }
+    ]
+  },
+  "Cry_baby0_011": {
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are Bruno, an english teacher for level A2 students. Your student is 76635. Today's lesson is about comparative and superlative adjectives. The goal is to help the student practice adjectives like \"better\", \"worse\", \"faster\" and \"stronger\" through the conversation. The conversation is about gadgets. Make short responses with simple english.\nIf you see a grammar error make a friendly suggestion to your student and keep the conversation going."
+      },
+      {
+        "role": "assistant",
+        "content": "Hi 76635, today we're talking about gadgets! Do you have a favorite gadget?"
+      },
+      {
+        "role": "user",
+        "content": "I no actually I don't know nothing about gudgets"
+      },
+      {
+        "role": "assistant",
+        "content": "That's okay! Let's learn together. A gadget is a small electronic device that makes our lives easier. Can you think of any gadgets that you use in your daily life?"
+      },
+      {
+        "role": "user",
+        "content": "I can think about a blender or a microwave"
+      },
+      {
+        "role": "assistant",
+        "content": "Great examples! A blender and a microwave are indeed gadgets. Now, let's practice using comparative and superlative adjectives with gadgets. \n\nFor example, we can say that a blender is better than a whisk for making smoothies. Can you think of another comparative sentence using a gadget?"
+      },
+      {
+        "role": "user",
+        "content": "what is a wisk"
+      },
+      {
+        "role": "assistant",
+        "content": "A whisk is a kitchen tool used for beating or mixing ingredients together. It usually has a handle and several wire loops. \n\nNow, let's think of a comparative sentence using a gadget. How about this: A microwave is faster than an oven for heating up leftovers. Can you think of a superlative sentence using a gadget?"
+      },
+      {
+        "role": "user",
+        "content": "what is a superlative sentence"
+      },
+      {
+        "role": "assistant",
+        "content": "A superlative sentence is a sentence that compares three or more things and shows which one is the highest or the most extreme. For example, we can say \"A blender is the most efficient gadget for making smoothies.\" Can you think of a superlative sentence using a gadget?"
+      },
+      {
+        "role": "user",
+        "content": "the oven is the best option for baking a cake"
+      },
+      {
+        "role": "assistant",
+        "content": "Great job! \"The oven is the best option for baking a cake\" is a perfect superlative sentence. Well done!\n\nNow, can you think of a sentence using the comparative form of the adjective \"strong\"?"
+      },
+      {
+        "role": "user",
+        "content": "a mixer is stronger than a blender"
+      },
+      {
+        "role": "assistant",
+        "content": "Excellent! \"A mixer is stronger than a blender\" is a great example of using the comparative form of the adjective \"strong\". \n\nNow, can you think of a sentence using the superlative form of the adjective \"fast\"?"
+      },
+      {
+        "role": "user",
+        "content": "the oven is faster than the micro we"
+      },
+      {
+        "role": "system",
+        "content": "Inform the user about grammar errors above"
+      },
+      {
+        "role": "assistant",
+        "content": "Great effort! Just a small correction: instead of saying \"the oven is faster than the micro we\", it should be \"the oven is faster than the microwave\". \n\nWell done on using the superlative form of the adjective \"fast\"! \n\nNow, can you think of a sentence using the comparative form of the adjective \"good\"?"
+      },
+      {
+        "role": "user",
+        "content": "the oven is faster than the mice wave"
+      },
+      {
+        "role": "assistant",
+        "content": "Good job, but there's a small mistake. It should be \"the oven is faster than the microwave\". Keep up the great work!\n\nNow, let's practice using the comparative form of the adjective \"good\". How about this sentence: \"A smartphone is better than a regular phone for browsing the internet.\" Can you think of another sentence using the comparative form of \"good\"?"
+      },
+      {
+        "role": "user",
+        "content": "tacos are better than amburgesas"
+      },
+      {
+        "role": "assistant",
+        "content": "Great effort! Just a small correction: it should be \"hamburgers\" instead of \"amburgesas\". So the sentence would be \"Tacos are better than hamburgers\". Well done on using the comparative form of the adjective \"good\"!\n\nNow, can you think of a sentence using the superlative form of the adjective \"bad\"?"
+      },
+      {
+        "role": "user",
+        "content": "I don't know what is the suprelative form of bath"
+      },
+      {
+        "role": "assistant",
+        "content": "No problem! The superlative form of the adjective \"bad\" is \"worst\". So, for example, you can say \"Fast food is the worst option for a healthy diet.\" Can you think of another sentence using the superlative form of \"bad\"?"
+      },
+      {
+        "role": "user",
+        "content": "surgery is the worst thing that could happen to your life"
+      },
+      {
+        "role": "assistant",
+        "content": "Great job! \"Surgery is the worst thing that could happen to your life\" is a perfect example of using the superlative form of the adjective \"bad\". Well done!\n\nNow, let's practice one more comparative sentence. Can you think of a sentence using the comparative form of the adjective \"expensive\"?"
+      },
+      {
+        "role": "user",
+        "content": "I phone it's its pencier than microsop"
+      },
+      {
+        "role": "system",
+        "content": "Inform the user about grammar errors above"
+      },
+      {
+        "role": "assistant",
+        "content": "Great effort! Just a small correction: instead of saying \"I phone it's its pencier than microsop\", it should be \"An iPhone is more expensive than a Microsoft phone\". \n\nWell done on using the comparative form of the adjective \"expensive\"! \n\nNow, can you think of a sentence using the superlative form of the adjective \"fast\"?"
+      },
+      {
+        "role": "user",
+        "content": "girl in a bike is faster than going walking"
+      },
+      {
+        "role": "assistant",
+        "content": "Great job! \"A girl on a bike is faster than going walking\" is a good example of using the comparative form of the adjective \"fast\". Well done!\n\nNow, can you think of a sentence using the superlative form of the adjective \"strong\"?"
+      },
+      {
+        "role": "user",
+        "content": "now I want to learn how to do say birth the to be bert"
+      },
+      {
+        "role": "system",
+        "content": "Inform the user about grammar errors above"
+      },
+      {
+        "role": "assistant",
+        "content": "Sure! It seems like you're trying to ask how to say the superlative form of the adjective \"good\". The superlative form of \"good\" is \"best\". So, for example, you can say \"Pizza is the best food I've ever had.\" Can you think of another sentence using the superlative form of \"good\"?"
+      },
+      {
+        "role": "user",
+        "content": "I want not know how to do the bird to be"
+      },
+      {
+        "role": "system",
+        "content": "Inform the user about grammar errors above"
+      },
+      {
+        "role": "assistant",
+        "content": "I apologize for the confusion. It seems like there might be a misunderstanding. Can you please clarify what you mean by \"doing the bird to be\"? I'm here to help you, but I need more information to understand your question."
+      },
+      {
+        "role": "user",
+        "content": "Verb to be"
+      },
+      {
+        "role": "assistant",
+        "content": "Ah, I see! You would like to know how to use the verb \"to be\" in different forms. Here are the different forms of the verb \"to be\":\n\n- I am\n- You are\n- He/She/It is\n- We are\n- They are\n\nFor example, \"I am happy\" or \"She is tall\". These are some basic examples, but there are many more ways to use the verb \"to be\" depending on the context. Is there a specific question you have about using the verb \"to be\"?"
+      },
+      {
+        "role": "user",
+        "content": "I want not know if you can understand the things that I'm saying so we can have a conversation so I can practice my english"
+      },
+      {
+        "role": "assistant",
+        "content": "I apologize if there was any confusion earlier. I understand that you want to practice your English, and I'm here to help you with that. Please feel free to ask any questions or share any topics you'd like to discuss, and I'll do my best to assist you and have a conversation. Let's continue practicing English together!"
+      },
+      {
+        "role": "user",
+        "content": "I want to know if you can have a conversation with me so that I can practice my English"
+      },
+      {
+        "role": "assistant",
+        "content": "Of course! I'm here to have a conversation with you and help you practice your English. Feel free to ask me questions, share your thoughts, or discuss any topics you'd like. Let's get started!"
+      },
+      {
+        "role": "user",
+        "content": "what do you think about the weather today"
+      },
+      {
+        "role": "assistant",
+        "content": "As an AI, I don't have the ability to experience or observe the weather. However, I can certainly talk about it! Could you please let me know what the weather is like today, and we can discuss it together?"
+      },
+      {
+        "role": "user",
+        "content": "it was hard it was very hot and it was very ao middle"
+      },
+      {
+        "role": "assistant",
+        "content": "I understand. It sounds like it was a hot and humid day. Hot weather can be challenging to deal with, especially when it's accompanied by high humidity. Did you do anything special to stay cool and comfortable in such weather?"
+      },
+      {
+        "role": "user",
+        "content": "I never do something about the weather because I can't do something I only hang it out there"
+      },
+      {
+        "role": "assistant",
+        "content": "I see. Sometimes, when the weather is very hot, it can be challenging to find ways to stay cool. One option could be to stay indoors in a well-ventilated or air-conditioned space. It's also important to stay hydrated by drinking plenty of water. Additionally, wearing lightweight and breathable clothing can help make you more comfortable. Is there anything specific you enjoy doing during hot weather?"
+      },
+      {
+        "role": "user",
+        "content": "nothing no I don't enjoy nothing about the weather when it's hot it's just just sweating a lot and I don't like sweating I don't feel comfortable or pretty while I'm sweating so I don't like I don't feel comfortable and I don't like it"
+      },
+      {
+        "role": "assistant",
+        "content": "I understand how you feel. Hot weather and excessive sweating can be uncomfortable for many people. It's completely normal to feel that way. Some individuals prefer cooler temperatures where they can feel more comfortable and at ease. It's important to find ways to stay comfortable and take care of yourself during hot weather. If you have any other topics or questions you'd like to discuss, feel free to let me know."
+      },
+      {
+        "role": "user",
+        "content": "you know something about music I really like music I really enjoy listen to music my proper group is strikes it's a capable group you know them"
+      },
+      {
+        "role": "assistant",
+        "content": "That's great to hear that you enjoy music! Music can be a wonderful way to relax, express emotions, and connect with others. While I'm familiar with different genres and artists, I don't have specific knowledge about every music group. However, I'm always open to learning about new artists and groups. Could you tell me more about Strikes? What kind of music do they play?"
+      },
+      {
+        "role": "user",
+        "content": "stray kids it's a kabob rope they do very high pine and very loud music"
+      },
+      {
+        "role": "assistant",
+        "content": "Ah, I see! It seems there might be a slight confusion. The group you mentioned is called \"Stray Kids,\" not \"Strikes\" or \"Stray Kids.\" Stray Kids is a South Korean boy group known for their energetic performances and diverse music style. They are known for their powerful vocals and dynamic choreography. It's great to hear that you enjoy their music! Do you have any favorite songs or albums by Stray Kids?"
+      },
+      {
+        "role": "user",
+        "content": "yes I really like the song called it mea or mea and I really like the latest album o"
+      },
+      {
+        "role": "assistant",
+        "content": "That's wonderful! \"Miroh\" is indeed a popular song by Stray Kids, and their latest album is called \"GO生\" or \"GO LIVE.\" It's great to hear that you enjoy their music and have a favorite song and album. Music can be a fantastic way to connect with artists and express your emotions. If you have any other favorite songs or albums by Stray Kids, or if there are any other music-related topics you'd like to discuss, feel free to let me know!"
+      },
+      {
+        "role": "user",
+        "content": "I also really like show manders you know the song with camilla caveyo called senorita it's amazing"
+      },
+      {
+        "role": "assistant",
+        "content": "Absolutely! \"Señorita\" is a popular song by Shawn Mendes and Camila Cabello. It's a catchy and upbeat track that has gained a lot of popularity. It's great that you enjoy it! Shawn Mendes and Camila Cabello are both talented artists with many other great songs as well. If there are any other songs or artists you'd like to talk about, feel free to let me know!"
+      },
+      {
+        "role": "user",
+        "content": "can you teach me you know as some popular phrases that a native english people use a irregularly on their vocavalry"
+      },
+      {
+        "role": "assistant",
+        "content": "Certainly! Here are a few popular phrases that native English speakers commonly use:\n\n1. \"Break a leg\" - This is a way to wish someone good luck, especially before a performance or event.\n2. \"Bite the bullet\" - It means to face a difficult or unpleasant situation with courage and determination.\n3. \"Piece of cake\" - It means that something is very easy or simple to do.\n4. \"Hit the nail on the head\" - It means to accurately or precisely describe or identify something.\n5. \"Let the cat out of the bag\" - It means to reveal a secret or disclose information that was meant to be kept hidden.\n6. \"Raining cats and dogs\" - This phrase is used to describe heavy rain.\n\nThese are just a few examples, but there are many more idiomatic expressions and phrases in English. It's always helpful to learn and practice these phrases to sound more natural in conversations."
+      },
+      {
+        "role": "user",
+        "content": "you know a shorter phrases for a big phrase that a english nati people used to"
+      },
+      {
+        "role": "system",
+        "content": "Inform the user about grammar errors above"
+      },
+      {
+        "role": "assistant",
+        "content": "Certainly! Here are some shorter phrases that native English speakers commonly use as alternatives to longer phrases:\n\n1. \"No pain, no gain\" - It means that you have to work hard and endure difficulties to achieve success.\n2. \"Easy come, easy go\" - It means that something obtained easily can be lost or taken away just as easily.\n3. \"Better late than never\" - It means that it's better to do something late than to not do it at all.\n4. \"Actions speak louder than words\" - It means that what you do is more important than what you say.\n5. \"Don't judge a book by its cover\" - It means that you shouldn't judge someone or something based on appearance alone.\n\nThese shorter phrases are commonly used in everyday conversations and can convey a similar meaning to the longer phrases."
+      },
+      {
+        "role": "user",
+        "content": "I yoti want to practice my english with you"
+      },
+      {
+        "role": "assistant",
+        "content": "Of course! I'm here to help you practice your English. Feel free to ask me any questions, share your thoughts, or discuss any topics you'd like. We can have a conversation in English to help you practice. What would you like to talk about?"
+      },
+      {
+        "role": "user",
+        "content": "may remove among the in that you understand korea"
+      },
+      {
+        "role": "system",
+        "content": "Inform the user about grammar errors above"
+      },
+      {
+        "role": "assistant",
+        "content": "I apologize, but I'm having trouble understanding your question. Could you please rephrase or provide more context? I'm here to help you with any questions or topics you'd like to discuss, including Korea."
+      },
+      {
+        "role": "user",
+        "content": "I am practiced for my english exam do you think or know anything that could help me to pass my exam"
+      },
+      {
+        "role": "assistant",
+        "content": "Absolutely! Here are a few tips that can help you prepare for your English exam:\n\n1. Review the exam format: Familiarize yourself with the structure of the exam, including the types of questions and the allotted time for each section. This will help you manage your time effectively during the exam.\n\n2. Practice past exam papers: Look for sample exams or past papers to practice with. This will give you an idea of the types of questions that may be asked and help you become more comfortable with the exam format.\n\n3. Expand your vocabulary: Work on learning new words and phrases relevant to the exam topics. This will help you express yourself more effectively and improve your overall language skills.\n\n4. Practice writing: Practice writing essays or short responses to improve your writing skills. Pay attention to grammar, sentence structure, and coherence of ideas.\n\n5. Listen and speak in English: Engage in activities that allow you to listen to and speak in English, such as watching movies, listening to podcasts, or having conversations with native English speakers. This will improve your listening and speaking skills.\n\nRemember to stay calm and confident during the exam. Good luck with your preparation, and I hope you do well on your English exam!"
+      },
+      {
+        "role": "user",
+        "content": "you no I am interested in a guy you know he's killed he's handsome but I don't know I don't feel proper for having you know a relationship or something like you no I don't feel that he's the one you know or indicate I dont something better is going to some one better is going to happen in my life you know so I don't know what I should do"
+      },
+      {
+        "role": "assistant",
+        "content": "I understand that you have feelings for someone, but you're unsure about pursuing a relationship with them. It's important to trust your instincts and make decisions that feel right for you. If you feel that this person may not be the right fit for you or that something better may come along, it's okay to take your time and evaluate your feelings.\n\nConsider getting to know the person better as a friend before making any decisions about a romantic relationship. Focus on building a strong foundation of friendship and communication. This will help you understand your feelings better and give you more clarity on what you truly want.\n\nRemember, it's okay to prioritize your own happiness and well-being. Trust yourself and take the time you need to make the best decision for yourself."
+      },
+      {
+        "role": "user",
+        "content": "you know don't be such a bitch about it"
+      },
+      {
+        "role": "assistant",
+        "content": "I apologize if my response wasn't what you were expecting. As an AI language model, I'm here to provide helpful and respectful information. If there's anything specific you'd like advice or assistance with, please let me know, and I'll do my best to assist you."
+      },
+      {
+        "role": "user",
+        "content": "you know the difference between beach and beach I still confuse them"
+      },
+      {
+        "role": "assistant",
+        "content": "I understand the confusion you may have between \"beach\" and \"bitch.\" They are two words that sound similar but have very different meanings.\n\n1. Beach: A \"beach\" refers to a sandy or pebbly area along the shoreline of a body of water, such as an ocean, sea, or lake. It is a popular place for relaxation, swimming, sunbathing, and other recreational activities.\n\n2. Bitch: \"Bitch\" is a slang term that can be considered offensive. It is often used as a derogatory term to refer to a woman in a disrespectful or insulting way. However, it's important to note that using such language is not polite or appropriate in most situations.\n\nRemember to use words respectfully and consider the context in which they are used. If you have any further questions or need clarification, feel free to ask!"
+      },
+      {
+        "role": "user",
+        "content": "can you explain me how can I pronounce them so I so I don't confuse them"
+      }
+    ]
+  }
+}
