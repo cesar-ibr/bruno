@@ -88,6 +88,7 @@ async function main() {
       const userId = message.from?.username || 'Unknown';
       const chat_id = message.chat.id;
       let userText = message.text ?? '';
+      let botResponse = '';
 
       // Handle /start
       if (userText === '/start') {
@@ -132,20 +133,17 @@ async function main() {
       // 4) If the message is not understandable ask user to try again
       if (grammarQuality === 'BAD') {
         console.log(`%cGrammar: ${grammarQuality}. Score: ${score}`, 'color: orange; font-style: italic');
-        const reply = `Sorry, I think I don't understand you. Did you say "${userText}"?`;
-        appendMessage(userId, { role: 'assistant', content: reply });
-        await post(`${TELEGRAM_API}/sendMessage`, { text: reply, chat_id });
-        continue;
+        botResponse = `Sorry, I think I don't understand. Did you say "${userText}"?`;
+      } else {
+        botResponse = await getCompletion(userId);
       }
-      const botResponse = await getCompletion(userId);
+
+      clearInterval(intvl);
+      console.log(`%cBruno:`, 'color: #31AFDE', botResponse);
       appendMessage(userId, { role: 'assistant', content: botResponse });
 
-      console.log(`%cBruno:`, 'color: #31AFDE', botResponse);
-      clearInterval(intvl);
-
       // 5) Send final message
-      const payload = { text: botResponse, chat_id };
-      await post(`${TELEGRAM_API}/sendMessage`, payload);
+      await post(`${TELEGRAM_API}/sendMessage`, { text: botResponse, chat_id });
     }
   }
 }

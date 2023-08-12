@@ -37,7 +37,7 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   // save audio file
-  console.log(`%c Gettiing file from: ${link}`, 'color: yellow');
+  console.log(`%c Getting file from: ${link}`, 'color: yellow');
   const fileName = link.replace('.oga', '.ogg').split('/').findLast(Boolean) ?? 'audio.ogg';
   const filePath = AUDIO_FOLDER.concat(fileName);
   console.log(`%c --- Saving at ${filePath}`, 'color: yellow');
@@ -47,6 +47,7 @@ const handler = async (req: Request): Promise<Response> => {
     write: true,
     truncate: true,
   });
+  
   const res = await fetch(link);
   if (res.status !== 200) {
     return errorResponse('Audio file not found', 404);
