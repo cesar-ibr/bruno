@@ -6,6 +6,7 @@
   "license": "MIT",
   "scripts": {
     "run:chat": "deno run --allow-env --allow-net --allow-write ./src/chat.service.ts",
+    "test": "deno run --allow-env --allow-net ./src/pre-run.ts",
     "run:grammar": "deno run --allow-net --allow-env ./src/grammar.service.ts port=8000",
     "run:asr": "deno run --allow-net --allow-env --allow-read --allow-write ./src/asr.service.ts port=8001",
     "asr": "deno run --allow-env --allow-net --allow-read ./scripts/asr.ts",

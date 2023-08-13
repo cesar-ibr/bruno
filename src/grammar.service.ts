@@ -7,12 +7,8 @@ const port = portNum ? Number(portNum) : 8000;
 
 const HF_TOKEN = Deno.env.get('HF_TOKEN') ?? '';
 const ROBERTA_COLA = 'textattack/roberta-base-CoLA';
-// Models to correct grammar:
-// 'vennify/t5-base-grammar-correction'
-// 'grammarly/coedit-large'
-// 'pszemraj/flan-t5-large-grammar-synthesis';
-// Above this threshold sentences contains many grammar errors
-const BAD_GRAMMAR_THRESHOLD = 90;
+// Below this threshold sentences contain grammar errors
+const GRAMMAR_THRESHOLD = 15;
 
 const hf = new HfInference(HF_TOKEN);
 const headers = {
@@ -22,7 +18,7 @@ const headers = {
 };
 
 const getScore = (scores: { label: string, score: number }[]) => {
-  const score = scores.find(_score => _score.label === 'LABEL_0')?.score || BAD_GRAMMAR_THRESHOLD;
+  const score = scores.find(_score => _score.label === 'LABEL_1')?.score || GRAMMAR_THRESHOLD;
   return Math.round(score * 100);
 };
 
@@ -47,20 +43,9 @@ const handler = async (req: Request) => {
 
   return new Response(JSON.stringify({
     input,
-    label: inputScore > BAD_GRAMMAR_THRESHOLD ? 'BAD' : 'ACCEPTABLE',
+    label: inputScore < GRAMMAR_THRESHOLD ? 'BAD' : 'OKAY',
     score: inputScore
   }), headers);
-
-  // console.log('Fixing grammar...');
-  // console.time('TIME');
-  // const { generated_text } = await hf.textGeneration({
-  //   model: GRAMMAR_FIX_MODEL,
-  //   inputs: input,
-  //   parameters: { max_new_tokens: 250 }
-  // });
-
-  // console.log(`%cOutput: "${generated_text}"`, "color: blue");
-  // console.timeEnd('TIME');
 };
 
 try {

@@ -1,59 +1,28 @@
 import Morphine from "https://deno.land/x/morphine@0.0.1/mod.ts";
-import { get, post } from "./utils/fetch.ts";
-import { appendMessage, getCompletion, initChat, getChatHistory, saveChats } from './utils/chats.ts';
+import { post } from "./utils/fetch.ts";
+import {
+  getChatCompletion,
+  sendTextMessage,
+  startTyping,
+  getFileLink,
+  getLastChat,
+  startNewConversation,
+  ChatMessages,
+  ChatMessage,
+  updateConversation
+} from './utils/chats.ts';
 import { Update as TUpdate } from "./types/telegram.ts";
 import { IGrammarResponse } from "./types/grammar.ts"
-import { supabaseClient } from './utils/supabase.ts';
 
 // constants
 const GRAMMAR_API_URL = Deno.env.get('GRAMMAR_API') ?? '';
 const ASR_API_URL = Deno.env.get('STT_API') ?? '';
 const TOKEN = Deno.env.get('TELEGRAM_TOKEN') || '';
 const TELEGRAM_API = 'https://api.telegram.org/bot'.concat(TOKEN);
-const TELEGRAM_FILE_API = 'https://api.telegram.org/file/bot'.concat(TOKEN);
 
 interface IUpdateResult {
   ok: boolean;
   result: TUpdate[];
-}
-
-// Get latest prompt
-const {
-  data = [],
-  error
-} = await supabaseClient
-  .from('lessons')
-  .select()
-  .order('created_at', { ascending: false });
-
-if (error) {
-  console.log(`%c DB Error: ${error.message}`, 'color: red');
-}
-
-const basePrompt = data && data.length ? data[0].prompt : 'You are Bruno, an English teacher';
-const starterMessage: string = data && data.length ? data[0].starter : 'What would you like to practice today?';
-console.log(`%cBase Prompt: ${basePrompt}`, 'color: yellow; font-style: italic');
-
-// Test Server Connection
-try {
-  const { ok = false } = await get(`${TELEGRAM_API}/getMe`);
-  // throws error if response ok is not true
-  if (!ok) {
-    throw new Error('Login Failed');
-  }
-  console.log('🎉 Login Successful!');
-} catch (err) {
-  console.error('Login Failed ❗️', err);
-}
-
-const getFileLink = async (fileId = '') => {
-  const url = `${TELEGRAM_API}/getFile?file_id=${fileId}`;
-  const res = await get(url);
-
-  if (res.ok && res.result?.file_path) {
-    const filePath = res.result?.file_path;
-    return `${TELEGRAM_FILE_API}/${filePath}` as string;
-  }
 }
 
 // Iterator for async polling
@@ -71,14 +40,8 @@ const pollBotUpdates = new Morphine<TUpdate[]>((async function* () {
   }
 })());
 
-Deno.addSignalListener('SIGINT', () => {
-  console.log('\n--- Saving chats.json before exit...');
-  saveChats();
-  Deno.exit();
-});
-
 async function main() {
-  console.log('=== Polling new messages...');
+  console.log('📩 Polling messages...');
   for await (const updates of pollBotUpdates) {
     for (const { message } of updates) {
       if (!message) {
@@ -86,69 +49,71 @@ async function main() {
       }
       // 1) Receive message
       const userId = message.from?.username || 'Unknown';
-      const chat_id = message.chat.id;
-      let userText = message.text ?? '';
+      const chatId = message.chat.id;
+      const usrMessage: ChatMessage = {
+        role: 'user',
+        content: message.text ?? '',
+        dateTime: new Date().toISOString()
+      };
       let botResponse = '';
+      const lastChat = await getLastChat(userId);
 
-      // Handle /start
-      if (userText === '/start') {
-        initChat({ userId, basePrompt, starterMessage });
-        await post(`${TELEGRAM_API}/sendMessage`, {
-          chat_id,
-          text: starterMessage.replace('{{NAME}}', userId),
-        });
+      // Start new conversation
+      if (message.text === '/start' || !lastChat) {
+        console.log('Starting new conversation...');
+        await startNewConversation(chatId, userId);
         continue;
       }
 
-      // send 'typing...' every 7 seconds
-      const intvl = setInterval(() => post(`${TELEGRAM_API}/sendChatAction`, { chat_id, action: 'typing' }), 7000);
+      // show 'typing...' status in chat
+      startTyping(chatId);
 
       // Process Voice Note
       if (message.voice) {
-        console.log('🔉 transcribing audio...');
-        const { file_id } = message.voice;
-        const link = await getFileLink(file_id);
+        console.log('🔉 Audio received. Transcribing...');
+        const link = await getFileLink(message.voice);
         if (!link) {
-          clearInterval(intvl);
-          console.error('%cDownload link not found', 'color: red');
-          await post(
-            `${TELEGRAM_API}/sendMessage`,
-            {
-              chat_id, text: 'Sorry, I cannot listent your audio right now'
-            });
+          console.error('%c Download link not found', 'color: red');
+          await sendTextMessage(
+            chatId,
+            `Sorry, I couldn't listent your voice note. Please, send it again.`
+          );
           continue;
         }
-        const { text } = await post(ASR_API_URL, { link });
-        userText = text;
+        const { text, fileName } = await post(ASR_API_URL, { link });
+        usrMessage.content = text;
+        usrMessage.file = fileName;
       }
-      console.log(`%c${userId}:`, 'color: green', userText);
+      console.log(`%c ${userId}:`, 'color: green', usrMessage.content);
       // 2) Check grammar
-      const { label: grammarQuality, score } = await post(GRAMMAR_API_URL, { input: userText }) as IGrammarResponse;
+      const {
+        label: grammarQuality,
+        score: grammarScore
+      } = await post(GRAMMAR_API_URL, { input: usrMessage.content }) as IGrammarResponse;
 
-      // 3) Get Chat Completion
-      if (!getChatHistory(userId)) {
-        initChat({ userId, basePrompt, starterMessage });
-      }
-      appendMessage(userId, { role: 'user', content: userText });
-      // 4) If the message is not understandable ask user to try again
-      if (grammarQuality === 'BAD') {
-        console.log(`%cGrammar: ${grammarQuality}. Score: ${score}`, 'color: orange; font-style: italic');
-        botResponse = `Sorry, I think I don't understand. Did you say "${userText}"?`;
+      // 3) Prepare Chat Response
+      const chat = lastChat.chat as unknown as ChatMessages;
+      chat.messages.push({ ...usrMessage, grammarScore });
+      const messagesForCompletion = chat.messages.map(({ role, content }) => ({ role, content }));
+
+      // If speech has really bad grammar ask student to try again
+      if (message.voice && grammarQuality === 'BAD') {
+        console.log(`%cGrammar: ${grammarQuality}. Score: ${grammarScore}`, 'color: orange; font-style: italic');
+        botResponse = `Sorry, I think I don't understand. 🤔 Did you say "${usrMessage.content}"?`;
       } else {
-        botResponse = await getCompletion(userId);
+        botResponse = await getChatCompletion(messagesForCompletion);
       }
 
-      clearInterval(intvl);
-      console.log(`%cBruno:`, 'color: #31AFDE', botResponse);
-      appendMessage(userId, { role: 'assistant', content: botResponse });
-
-      // 5) Send final message
-      await post(`${TELEGRAM_API}/sendMessage`, { text: botResponse, chat_id });
+      // 4) Send and save final message
+      await sendTextMessage(chatId, botResponse);
+      chat.messages.push({ role: 'assistant', content: botResponse });
+      await updateConversation(lastChat.id, chat);
     }
   }
 }
 
 try {
+  // Process messages
   await main();
 } catch (err) {
   console.error(err);
