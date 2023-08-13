@@ -10,6 +10,17 @@ import { supabaseClient } from "./supabase.ts";
 const TOKEN = Deno.env.get('TELEGRAM_TOKEN') || '';
 const TELEGRAM_API = 'https://api.telegram.org/bot'.concat(TOKEN);
 const TELEGRAM_FILE_API = 'https://api.telegram.org/file/bot'.concat(TOKEN);
+const CHAT_INSTRUCTIONS = `
+  👋 I'm Bruno and I'm here to help you practice you English. We can talk about any topic! Some *tips* 👇
+  
+  🎙 Send me voice notes to practice your speaking.
+  
+  💭 Ask me how to say something in English. *Example:* "How can I say _recordar_ in English?".
+  
+  🤔 Ask me if you don't understand something i said. *Example:* "What does _superlative_ mean?"
+  
+  🔁 Select */start* from the menu to start a new conversation.
+`;
 
 const openAIConfig = new Configuration({
   apiKey: Deno.env.get('OPENAI_KEY') ?? '',
@@ -42,6 +53,12 @@ let _intvl = 0;
 export const getChatHistory = (userId = '') => {
   return _chats[userId];
 };
+
+const toMarkdown = (txt = '') => txt
+  .replaceAll('\t', '')
+  .replaceAll('!', '\\!')
+  .replaceAll('.', '\\.')
+  .trim()
 
 export const startTyping = (chatId: number) => {
   const url = `${TELEGRAM_API}/sendChatAction`;
@@ -96,12 +113,13 @@ export const getFileLink = async (voiceNote: Voice) => {
   }
 }
 
-export const sendTextMessage = async (chatId: number, text: string) => {
+export const sendTextMessage = async (chatId: number, text: string, markdown = false) => {
   stopTyping();
   console.log(`%c Bruno:`, 'color: #31AFDE', text);
   const res = await post(`${TELEGRAM_API}/sendMessage`, {
     chat_id: chatId,
-    text,
+    text:  markdown ? toMarkdown(text) : text,
+    parse_mode: markdown ? 'MarkdownV2' : '',
   });
   if (!res.ok) {
     console.log(`%c Error sending text message to chat ${chatId}`, 'color: red');
@@ -183,6 +201,8 @@ export const startNewConversation = async (chatId: number, userId: string) => {
   // create new chat record in DB
   await initChat({ userId, systemPrompt, starterMessage: message });
   const startMsg = message.replace('{{NAME}}', userId);
+  // send instructions
+  await sendTextMessage(chatId, CHAT_INSTRUCTIONS, true);
   await sendTextMessage(chatId, startMsg);
 };
 
