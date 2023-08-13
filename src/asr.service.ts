@@ -36,13 +36,13 @@ const handler = async (req: Request): Promise<Response> => {
     return errorResponse('Download link is missing', 400);
   }
 
+  const isRemoteFile = link.startsWith('http');
   const fileName = link.replace('.oga', '.ogg').split('/').findLast(Boolean) ?? 'audio.ogg';
-  const filePath = AUDIO_FOLDER.concat(fileName);
-  const shouldDownload = link.startsWith('http');
+  const filePath = isRemoteFile ? AUDIO_FOLDER.concat(fileName) : link;
   console.log(`%c Using file from: ${link}`, 'color: yellow');
 
   // Download audio file
-  if (shouldDownload) {
+  if (isRemoteFile) {
     console.log(`%c --- Saving at ${filePath}`, 'color: yellow');
   
     const destFile = await Deno.open(filePath, {
@@ -65,7 +65,7 @@ const handler = async (req: Request): Promise<Response> => {
   console.time('TIME');
 
   const output = await hf.automaticSpeechRecognition({
-    data: Deno.readFileSync(shouldDownload ? filePath : link),
+    data: Deno.readFileSync(filePath),
     model: MODEL_ID,
   });
 
@@ -73,9 +73,9 @@ const handler = async (req: Request): Promise<Response> => {
   console.log(`%cOutput: ${text}`, 'color: #31AFDE; font-style: italic');
   console.timeEnd('TIME');
 
-  // Save in DB avoiding `await`
-  if (shouldDownload) {
-    supabaseClient.from('asr_output').insert({ output: text, file: fileName });
+  // Save in DB only for remote files
+  if (isRemoteFile) {
+    await supabaseClient.from('asr_output').insert({ output: text, file: fileName });
   }
 
   // send result
