@@ -80,15 +80,23 @@ export const capitalizeI = (text = '') => {
   return text.replace(/^i\s|\si\s/gm, ' I ').replaceAll(`i'm`, `I'm`).trim();
 };
 
-export const getChatCompletion = async (messages: ChatCompletionRequestMessage[]) => {
+export const tokensAprox = (text = '') => {
+  return text.split(' ').length * 1.5;
+}
+
+export const getChatCompletion = async (messages: ChatCompletionRequestMessage[]): Promise<{
+  text: string;
+  tokens?: number; // token usage
+}> => {
   const res = await openai.createChatCompletion({
     model: 'gpt-3.5-turbo',
     temperature: 0.5,
     max_tokens: 256,
     messages,
   });
-  // console.log('--- completion:', res.data.choices[0].message);
-  return res.data.choices[0].message?.content ?? '';
+  const tokens = res.data.usage?.total_tokens;
+  const text = res.data.choices[0].message?.content ?? '';
+  return { tokens, text };
 }
 
 // Save chats in disk
@@ -213,6 +221,21 @@ export const updateConversation = async (id: number, chat: ChatMessages) => {
   const { error } = await supabaseClient
     .from('conversations')
     .update({ id, chat })
+    .eq('id', id);
+
+  if (error) {
+    throw error;
+  }
+}
+
+export const updateTokenUsage = async (id: number, tokens?: number) => {
+  // don't update tokens if it's 0 or undefined
+  if (!tokens) {
+    return;
+  }
+  const { error } = await supabaseClient
+    .from('conversations')
+    .update({ token_usage: tokens })
     .eq('id', id);
 
   if (error) {

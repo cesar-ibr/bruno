@@ -36,6 +36,7 @@ export interface Database {
           chat_id: number | null
           date: string | null
           id: number
+          token_usage: number
           topics: string | null
           userId: string
         }
@@ -44,6 +45,7 @@ export interface Database {
           chat_id?: number | null
           date?: string | null
           id?: number
+          token_usage?: number
           topics?: string | null
           userId: string
         }
@@ -52,6 +54,7 @@ export interface Database {
           chat_id?: number | null
           date?: string | null
           id?: number
+          token_usage?: number
           topics?: string | null
           userId?: string
         }

@@ -9,7 +9,9 @@ import {
   startNewConversation,
   ChatMessages,
   ChatMessage,
-  updateConversation
+  updateConversation,
+  updateTokenUsage,
+tokensAprox
 } from './utils/chats.ts';
 import { Update as TUpdate } from "./types/telegram.ts";
 import { IGrammarResponse } from "./types/grammar.ts"
@@ -19,6 +21,11 @@ const GRAMMAR_API_URL = Deno.env.get('GRAMMAR_API') ?? '';
 const ASR_API_URL = Deno.env.get('STT_API') ?? '';
 const TOKEN = Deno.env.get('TELEGRAM_TOKEN') || '';
 const TELEGRAM_API = 'https://api.telegram.org/bot'.concat(TOKEN);
+const CHAT_TOKEN_LIMIT = 3500;
+const CHAT_LIMIT_MESSAGE = `
+  We have reached the text limit of this conversation 🫢.
+  Let's start a new one! Type /start
+`.replaceAll('  ', '').trim();
 
 interface IUpdateResult {
   ok: boolean;
@@ -85,6 +92,15 @@ async function main() {
         usrMessage.file = fileName;
       }
       console.log(`%c ${userId}:`, 'color: green', usrMessage.content);
+
+      // 1.5) Ask to start a new chat when token limit has been reached
+      const context = lastChat.token_usage + tokensAprox(usrMessage.content);
+      console.log('%c Token Usage:', 'color: blue', context);
+      if (context >= CHAT_TOKEN_LIMIT) {
+        await sendTextMessage(chatId, CHAT_LIMIT_MESSAGE);
+        continue;
+      }
+
       // 2) Check grammar
       const {
         label: grammarQuality,
@@ -101,7 +117,9 @@ async function main() {
         console.log(`%cGrammar: ${grammarQuality}. Score: ${grammarScore}`, 'color: orange; font-style: italic');
         botResponse = `Sorry, I think I don't understand. 🤔 Did you say "${usrMessage.content}"?`;
       } else {
-        botResponse = await getChatCompletion(messagesForCompletion);
+        const { tokens, text } = await getChatCompletion(messagesForCompletion);
+        await updateTokenUsage(lastChat.id, tokens);
+        botResponse = text;
       }
 
       // 4) Send and save final message
