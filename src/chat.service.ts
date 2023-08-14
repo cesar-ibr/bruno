@@ -55,7 +55,7 @@ async function main() {
         continue;
       }
       // 1) Receive message
-      const userId = message.from?.username || 'Unknown';
+      const userId = message.from?.username || '';
       const chatId = message.chat.id;
       const usrMessage: ChatMessage = {
         role: 'user',

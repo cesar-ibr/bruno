@@ -178,7 +178,7 @@ export const initChat = async ({
   const { error, data } = await supabaseClient
     .from('conversations')
     .insert({
-      userId,
+      userId: userId || `Unknown_${chatId}`,
       chat: { messages },
       date,
       topics: '',
