@@ -151,12 +151,14 @@ type TInitChatParams = {
   userId: string;
   systemPrompt: string;
   starterMessage: string;
+  chatId?: number;
 };
 
 export const initChat = async ({
   userId,
   systemPrompt,
   starterMessage,
+  chatId
 }: TInitChatParams) => {
   const prompt = systemPrompt.replace('{{NAME}}', userId).trim();
   const starter = starterMessage.replace('{{NAME}}', userId).trim();
@@ -171,7 +173,8 @@ export const initChat = async ({
       userId,
       chat: { messages },
       date,
-      topics: ''
+      topics: '',
+      chat_id: chatId
     })
     .select();
 
@@ -199,7 +202,7 @@ export const startNewConversation = async (chatId: number, userId: string) => {
   const { systemPrompt, message } = await getChatStarter();
   console.log(`%c Base Prompt: ${systemPrompt}`, 'color: yellow; font-style: italic');
   // create new chat record in DB
-  await initChat({ userId, systemPrompt, starterMessage: message });
+  await initChat({ userId, systemPrompt, starterMessage: message, chatId });
   const startMsg = message.replace('{{NAME}}', userId);
   // send instructions
   await sendTextMessage(chatId, CHAT_INSTRUCTIONS, true);

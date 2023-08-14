@@ -33,6 +33,7 @@ export interface Database {
       conversations: {
         Row: {
           chat: Json
+          chat_id: number | null
           date: string | null
           id: number
           topics: string | null
@@ -40,6 +41,7 @@ export interface Database {
         }
         Insert: {
           chat: Json
+          chat_id?: number | null
           date?: string | null
           id?: number
           topics?: string | null
@@ -47,6 +49,7 @@ export interface Database {
         }
         Update: {
           chat?: Json
+          chat_id?: number | null
           date?: string | null
           id?: number
           topics?: string | null
