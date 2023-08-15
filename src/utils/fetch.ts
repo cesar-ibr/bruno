@@ -1,9 +1,14 @@
+
+const throwError = (res: Response, method = 'GET') => {
+  console.log(`%c${method} ${res.url}`, 'color: red');
+  throw new Error(`HTTP ${res.status} - ${res.statusText }`);
+};
+
 export const get = async (url = '/') => {
   const res = await fetch(url);
 
   if (res.status !== 200) {
-    console.log(`%c Error requesting ${url}`, 'color: red');
-    throw new Error(res.statusText);
+    throwError(res);
   }
   return await res.json();
 };
@@ -19,8 +24,7 @@ export const post = async (url = '/', payload = {}) => {
   });
 
   if (res.status !== 200) {
-    console.log(`%c Error requesting ${url}`, 'color: red');
-    throw new Error(res.statusText);
+    throwError(res, 'POST');
   }
   return await res.json();
 };

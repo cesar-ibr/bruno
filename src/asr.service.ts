@@ -1,6 +1,6 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { HfInference } from "https://esm.sh/@huggingface/inference@2.6.1";
-import { capitalizeI } from "./utils/chats.ts";
+import { capitalizeI } from "./utils/chat.ts";
 import { supabaseClient } from "./utils/supabase.ts";
 
 const HF_TOKEN = Deno.env.get('HF_TOKEN') ?? '';
@@ -17,8 +17,12 @@ const headers = {
   'Content-Type': 'application/json'
 };
 
+const log = (message = '', color = 'white') => {
+  console.log(`%c[ASR Service]${message}`, `color: ${color}`)
+}
+
 const errorResponse = (error = '', code = 500) => {
-  console.log(`%c${error}`, 'color: red');
+  log(`%c${error}`, 'red');
   return new Response(
     JSON.stringify({ error }),
     { status: code, headers }
@@ -33,17 +37,17 @@ const handler = async (req: Request): Promise<Response> => {
   // receive download link
   const { link = '' } = await req.json() as TRequest;
   if (!link) {
-    return errorResponse('Download link is missing', 400);
+    return errorResponse('Download link is required', 400);
   }
 
   const isRemoteFile = link.startsWith('http');
   const fileName = link.replace('.oga', '.ogg').split('/').findLast(Boolean) ?? 'audio.ogg';
   const filePath = isRemoteFile ? AUDIO_FOLDER.concat(fileName) : link;
-  console.log(`%c Using file from: ${link}`, 'color: yellow');
+  log(`%cUsing file from: ${link}`, 'yellow');
 
   // Download audio file
   if (isRemoteFile) {
-    console.log(`%c --- Saving at ${filePath}`, 'color: yellow');
+    log(`%c--- Saving at ${filePath}`, 'yellow');
   
     const destFile = await Deno.open(filePath, {
       create: true,
@@ -53,7 +57,7 @@ const handler = async (req: Request): Promise<Response> => {
     
     const res = await fetch(link);
     if (res.status !== 200) {
-      return errorResponse('Audio file not found', 404);
+      return errorResponse(res.statusText, res.status);
     }
     console.time('TIME');
     await res.body?.pipeTo(destFile.writable);
@@ -61,7 +65,7 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   // open file for inference
-  console.log('Transcribing...');
+  log('Transcribing...');
   console.time('TIME');
 
   const output = await hf.automaticSpeechRecognition({
@@ -70,7 +74,7 @@ const handler = async (req: Request): Promise<Response> => {
   });
 
   const text = capitalizeI(output.text);
-  console.log(`%cOutput: ${text}`, 'color: #31AFDE; font-style: italic');
+  log(`%cOutput: ${text}`, '#31AFDE');
   console.timeEnd('TIME');
 
   // Save in DB only for remote files

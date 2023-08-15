@@ -1,0 +1,1 @@
+deno run --allow-env --allow-net ./src/pre-run.ts

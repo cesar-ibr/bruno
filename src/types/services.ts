@@ -9,3 +9,8 @@ export interface IGrammarResponse {
   output?: string;
   outputScore?: number;
 }
+
+export interface IASRResponse {
+  text: string;
+  fileName: string;
+}

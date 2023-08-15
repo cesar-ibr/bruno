@@ -1,6 +1,6 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { HfInference } from "https://esm.sh/@huggingface/inference@2.6.1";
-import { IGrammarRequest } from "./types/grammar.ts";
+import { IGrammarRequest } from "./types/services.ts";
 
 const [, portNum] = (Deno.args[0] || '').split('=');
 const port = portNum ? Number(portNum) : 8000;
@@ -17,6 +17,10 @@ const headers = {
   }
 };
 
+const log = (message = '', color = 'white') => {
+  console.log(`%c[Grammar Service]${message}`, `color: ${color}`)
+}
+
 const getScore = (scores: { label: string, score: number }[]) => {
   const score = scores.find(_score => _score.label === 'LABEL_1')?.score || GRAMMAR_THRESHOLD;
   return Math.round(score * 100);
@@ -27,7 +31,7 @@ const handler = async (req: Request) => {
   const { input = '' } = await req.json() as IGrammarRequest;
 
   // classify grammar
-  console.log(`%cInput: "${input}"`, "color: yellow");
+  log(`%cInput: "${input}"`, 'yellow');
   if (!input || typeof input !== 'string') {
     return new Response('Input is required', { status: 400 });
   }
@@ -38,7 +42,7 @@ const handler = async (req: Request) => {
     inputs: input,
   });
   const inputScore = getScore(results);
-  console.log(`%cInput Score: ${inputScore}`, "font-weight: bold");
+  log(`%cInput Score: ${inputScore}`, 'white;font-weight: bold');
   console.timeEnd('TIME');
 
   return new Response(JSON.stringify({
