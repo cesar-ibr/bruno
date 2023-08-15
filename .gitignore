@@ -5,6 +5,7 @@ todo.md
 .env
 .env.*
 .DS_Store
+*.out
 
 # App
 voice_notes
