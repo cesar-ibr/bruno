@@ -31,7 +31,7 @@ const handler = async (req: Request) => {
   const { input = '' } = await req.json() as IGrammarRequest;
 
   // classify grammar
-  log(`%cInput: "${input}"`, 'yellow');
+  log(`Input: "${input}"`, 'yellow');
   if (!input || typeof input !== 'string') {
     return new Response('Input is required', { status: 400 });
   }
@@ -42,7 +42,7 @@ const handler = async (req: Request) => {
     inputs: input,
   });
   const inputScore = getScore(results);
-  log(`%cInput Score: ${inputScore}`, 'white;font-weight: bold');
+  log(`Input Score: ${inputScore}`, 'white;font-weight: bold');
   console.timeEnd('TIME');
 
   return new Response(JSON.stringify({

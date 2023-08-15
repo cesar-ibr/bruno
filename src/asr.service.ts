@@ -22,7 +22,7 @@ const log = (message = '', color = 'white') => {
 }
 
 const errorResponse = (error = '', code = 500) => {
-  log(`%c${error}`, 'red');
+  log(error, 'red');
   return new Response(
     JSON.stringify({ error }),
     { status: code, headers }
@@ -43,11 +43,11 @@ const handler = async (req: Request): Promise<Response> => {
   const isRemoteFile = link.startsWith('http');
   const fileName = link.replace('.oga', '.ogg').split('/').findLast(Boolean) ?? 'audio.ogg';
   const filePath = isRemoteFile ? AUDIO_FOLDER.concat(fileName) : link;
-  log(`%cUsing file from: ${link}`, 'yellow');
+  log(`Using file from: ${link}`, 'yellow');
 
   // Download audio file
   if (isRemoteFile) {
-    log(`%c--- Saving at ${filePath}`, 'yellow');
+    log(`--- Saving at ${filePath}`, 'yellow');
   
     const destFile = await Deno.open(filePath, {
       create: true,
@@ -74,7 +74,7 @@ const handler = async (req: Request): Promise<Response> => {
   });
 
   const text = capitalizeI(output.text);
-  log(`%cOutput: ${text}`, '#31AFDE');
+  log(`Output: ${text}`, '#31AFDE');
   console.timeEnd('TIME');
 
   // Save in DB only for remote files
