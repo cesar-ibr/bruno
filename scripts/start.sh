@@ -3,4 +3,4 @@ nohup deno run --allow-net --allow-env --allow-read --allow-write ./src/asr.serv
 # kick off Grammar Service
 nohup deno run --allow-net --allow-env ./src/grammar.service.ts port=8000 & disown
 # kick off Chat service
-nohup deno run --allow-env --allow-net --allow-write ./src/chat.service.ts & disown
+nohup deno run --allow-env --allow-net --allow-write ./src/chat.server.ts & disown
