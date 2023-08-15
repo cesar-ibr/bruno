@@ -1,0 +1,16 @@
+#!/bin/sh
+
+# Install Deno in Ubuntu
+# echo "Installing Deno..."
+# sudo apt update
+# sudo apt install unzip
+# curl -fsSL https://deno.land/x/install/install.sh | sh
+
+# Create .env
+touch .env
+echo "Insert content for .env file. ctrl-d when done."
+echo "--------------------------------------------"
+text=$(</dev/stdin)
+echo "$text" > .env
+source .env
+echo "Done!"

@@ -1,0 +1,42 @@
+#!/bin/sh
+
+# echo "Param: $1"
+# echo "complete list of params: $@"
+# echo "Total Number of Parameters: $#"
+# Colors
+NC='\033[0m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+CYAN='\033[0;36m'
+
+case $1 in
+  test)
+    echo "${CYAN}Testing Services${NC}"
+    deno run --allow-env --allow-net ./src/pre-run.ts
+    ;;
+  inference)
+    echo "${GREEN}Serving Models${NC}"
+    echo "ASR Model..."
+    nohup deno run --allow-net --allow-env --allow-read --allow-write ./src/asr.service.ts port=8001 & disown
+    echo "Grammar Model..."
+    nohup deno run --allow-net --allow-env ./src/grammar.service.ts port=8000 & disown
+    ;;
+  chat)
+    # kick off Chat service
+    echo "${GREEN}Starting Chat Service${NC}"
+    nohup deno run --allow-env --allow-net --allow-write ./src/chat.server.ts & disown
+    ;;
+  zip)
+    echo "${CYAN}Compressing voice_notes.tar.gz${NC}"
+    tar -zcvf voice_notes.tar.gz voice_notes
+    echo "${GREEN}Done!${NC}"
+    ;;
+  get_audios)
+    echo "${CYAN}Downloading voice_notes.tar.gz${NC}"
+    scp $REMOTE_SERVER:~/bruno/voice_notes.tar.gz ./
+    echo "${GREEN}Done!${NC}"
+    ;;
+  *)
+    echo "${YELLOW}Unknown command $1${NC}"
+esac
+exit $?

@@ -75,8 +75,9 @@ const bot = new Bot(TELEGRAM_TOKEN);
 /* Commands */
 bot.command('start', async (ctx) => {
   const { from, chat } = ctx;
-  const user = from?.username || from?.id || '';
-  const response = await insertNewConversation(chat.id, String(user));
+  const user = from?.username || from?.first_name || from?.id || '';
+  const userName = String(user).replaceAll(' ', '');
+  const response = await insertNewConversation(chat.id, userName);
   console.log('%cBruno:', 'color: green', response);
   await sendMessage(response, ctx);
 });
