@@ -5,7 +5,13 @@ const ASR_API_URL = Deno.env.get('STT_API') ?? '';
 const TOKEN = Deno.env.get('TELEGRAM_TOKEN') || '';
 const TELEGRAM_API = 'https://api.telegram.org/bot'.concat(TOKEN);
 
+const logTime = (start: number, label = '  [TIME]') => {
+  const seconds = (Date.now() - start) / 1000;
+  console.log(`%c${label} ${seconds}s`, 'color: orchid');
+};
+
 // Test Bot connection
+let start = Date.now();
 const { ok = false } = await get(`${TELEGRAM_API}/getMe`);
 // throws error if response ok is not true
 if (!ok) {
@@ -13,8 +19,10 @@ if (!ok) {
   throw new Error('Login Failed');
 }
 console.log('✅ Successful bot conenction');
+logTime(start);
 
 // Test ASR service
+start = Date.now();
 const { text } = await post(ASR_API_URL, { link: './example_audio/i-will-went.ogg' });
 const assertedTxt = text.includes('to a soccer game of the school of the state');
 
@@ -23,13 +31,15 @@ if (!text || !assertedTxt) {
   throw new Error('ASR Service not working');
 }
 console.log('✅ ASR service working');
+logTime(start);
 
 // Test Grammar service
+start = Date.now();
 const { score } = await post(GRAMMAR_API_URL, { input: 'This text has a gramar error' });
 
 if (typeof score !== 'number') {
   console.error('Grammar output is not what expected', 'color: red');
   throw new Error('Grammar Service not working');
 }
-
 console.log('✅ Grammar service working');
+logTime(start);

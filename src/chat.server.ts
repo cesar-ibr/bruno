@@ -178,4 +178,11 @@ bot.catch(({ ctx, error }) => {
   ctx.reply(`🤖💥 There's a technical issue with Bruno at the moment. He'll be back soon 🦾`);
 });
 
-bot.start();
+
+bot.start({
+  onStart: (botInfo) => {
+    console.log('%c[CHAT] Bot connected!', 'color: green');
+    console.log('[CHAT] Bot Info:', botInfo);
+    console.log('[CHAT] Listening...');
+  }
+});
