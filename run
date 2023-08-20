@@ -26,6 +26,11 @@ case $1 in
     echo "${GREEN}Starting Chat Service${NC}"
     nohup deno run --allow-env --allow-net --allow-write ./src/chat.server.ts & disown
     ;;
+  feedback)
+    # kick off Chat service
+    echo "${GREEN}Starting Feedback Service${NC}"
+    nohup deno run --allow-env --allow-net ./src/feedback.service.ts port=8002 & disown
+    ;;
   zip)
     echo "${CYAN}Compressing voice_notes.tar.gz${NC}"
     tar -zcvf voice_notes.tar.gz voice_notes

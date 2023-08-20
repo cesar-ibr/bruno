@@ -1,6 +1,7 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { HfInference } from "https://esm.sh/@huggingface/inference@2.6.1";
 import { capitalizeI } from "./utils/chat.ts";
+import { logger } from './utils/logger.ts';
 import { supabaseClient } from "./utils/supabase.ts";
 
 const HF_TOKEN = Deno.env.get('HF_TOKEN') ?? '';
@@ -17,9 +18,7 @@ const headers = {
   'Content-Type': 'application/json'
 };
 
-const log = (message = '', color = 'white') => {
-  console.log(`%c[ASR Service]${message}`, `color: ${color}`)
-}
+const log = logger('ASR');
 
 const errorResponse = (error = '', code = 500) => {
   log(error, 'red');

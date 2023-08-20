@@ -1,0 +1,28 @@
+### Grammar Service
+POST http://{{GRAMMAR_SERVER}}/
+Content-Type: application/json
+
+{
+    "input": "I think I want water"
+}
+
+### ASR Service
+POST http://{{ASR_SERVER}}/
+Content-Type: application/json
+
+{
+    "link": "./example_audio/i-will-went.ogg"
+}
+
+### Feedback Service
+POST http://{{FEEDBACK_SERVER}}
+Content-Type: application/json
+
+{
+    "chatId": 1878312143,
+    "messages": [
+        { "text": "Yes sounds interesting" },
+        { "text": "I think machine consciousness mimic biological consciousness" },
+        { "text": "I think I admire that he can play any role in any movie." }
+    ]
+}

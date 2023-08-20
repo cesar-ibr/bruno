@@ -14,5 +14,9 @@
     "convert": "deno run --allow-read --allow-write --allow-run --allow-env ./scripts/convert.ts",
     "update-types": "supabase gen types typescript --project-id $SUPABASE_PROJECT_REF > ./src/types/db.ts"
   },
-  "dependencies": {}
+  "dependencies": {},
+  "repository": "git@github.com:cesar-ibr/bruno.git",
+  "devDependencies": {
+    "supabase": "^1.86.2"
+  }
 }

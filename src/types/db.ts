@@ -89,13 +89,26 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_underscore_messages: {
+        Args: {
+          conversation_id: number
+          score: number
+        }
+        Returns: Json[]
+      }
     }
     Enums: {
       [_ in never]: never
     }
     CompositeTypes: {
-      [_ in never]: never
+      message: {
+        score: number
+        content: string
+      }
+      messagerec: {
+        score: number
+        content: string
+      }
     }
   }
 }

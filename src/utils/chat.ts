@@ -43,6 +43,7 @@ export interface ChatMessage extends ChatCompletionRequestMessage {
   fileName?: string;
   dateTime?: string;
   score?: number;
+  messageId?: number;
 }
 
 export interface ChatMessages {

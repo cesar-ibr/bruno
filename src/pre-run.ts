@@ -1,14 +1,10 @@
 import { get, post } from "./utils/fetch.ts";
+import { logTime } from "./utils/logger.ts";
 
 const GRAMMAR_API_URL = Deno.env.get('GRAMMAR_API') ?? '';
 const ASR_API_URL = Deno.env.get('STT_API') ?? '';
 const TOKEN = Deno.env.get('TELEGRAM_TOKEN') || '';
 const TELEGRAM_API = 'https://api.telegram.org/bot'.concat(TOKEN);
-
-const logTime = (start: number, label = '  [TIME]') => {
-  const seconds = (Date.now() - start) / 1000;
-  console.log(`%c${label} ${seconds}s`, 'color: orchid');
-};
 
 // Test Bot connection
 let start = Date.now();

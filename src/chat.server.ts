@@ -16,7 +16,7 @@ import {
   CHAT_LIMIT_MESSAGE,
   getFileLink
 } from './utils/chat.ts';
-import { IASRResponse, IGrammarResponse } from "./types/services.ts"
+import { IASRResponse, IFeedbackRequest, IGrammarResponse } from "./types/services.ts"
 
 type TChatRecord = Database['public']['Tables']['conversations']['Row'];
 
@@ -24,7 +24,10 @@ type TChatRecord = Database['public']['Tables']['conversations']['Row'];
 const TELEGRAM_TOKEN = Deno.env.get('TELEGRAM_TOKEN') || '';
 const GRAMMAR_API_URL = Deno.env.get('GRAMMAR_API') ?? '';
 const ASR_API_URL = Deno.env.get('STT_API') ?? '';
+const FEEDBACK_API_URL = Deno.env.get('FEEDBACK_API') ?? '';
+const NO_FEEDBACK_YET = `Congrats {{NAME}}! Up until now all your messages look good 👏🥳`;
 const CHAT_TOKEN_LIMIT = 3500;
+const GRAMMAR_LOW_SCORE = 80;
 
 const tokenOverflow = (tokenUsage: number, text: string) => {
   const totalTokens = tokenUsage + tokensAprox(text);
@@ -68,8 +71,17 @@ const getGrammarEval = async (input = '') => {
   return results;
 };
 
+// Transform User's Telegram Message to Chat Messages for DB
+const toChatMessage = (message: NonNullable<Context['message']>): ChatMessage => {
+  const msgISODate = new Date(message.date * 1000).toISOString();
+  return {
+    role: 'user',
+    content: message.text ?? '',
+    dateTime: msgISODate,
+    messageId: message.message_id,
+  };
+}
 
-// New Implementation
 const bot = new Bot(TELEGRAM_TOKEN);
 
 /** Commands */
@@ -86,16 +98,45 @@ bot.command('suggestions', async (ctx) => {
   await ctx.reply(CHAT_INSTRUCTIONS, { parse_mode: 'HTML' });
 });
 
-bot.command('feedback', async (ctx) => {
-  await sendMessage('Sorry, this feature is not available yet 😅', ctx);
+bot.command('instructions', async (ctx) => {
+  await ctx.reply(CHAT_INSTRUCTIONS, { parse_mode: 'HTML' });
 });
 
-/* Text Message */
+bot.command('feedback', async (ctx) => {
+  const { chat, from } = ctx;
+  const user = from?.username || from?.first_name || from?.id || '';
+  const userName = String(user).replaceAll(' ', '');
+  // get last chat id
+  const recentChat = await getLastChat(chat.id);
+  if (!recentChat) {
+    return await sendMessage(ASK_START_CHAT, ctx);
+  }
+  bot.api.sendChatAction(chat.id, 'typing');
+  // get messages with low score
+  const { data, error } = await supabaseClient.rpc('get_underscore_messages', {
+    conversation_id: recentChat.id,
+    score: GRAMMAR_LOW_SCORE
+  });
+  if (error) {
+    throw error;
+  }
+  const messages = (data as unknown as ChatMessage[])
+    .map(({ messageId, content }) => ({ messageId, text: content ?? '' }));
+  // if no messages w/low score found return congrats
+  if (!messages.length) {
+    return sendMessage(NO_FEEDBACK_YET.replace('{{NAME}}', userName), ctx);
+  }
+  // send messages to Feedback service
+  const payload: IFeedbackRequest = { chatId: chat.id, messages };
+  post(FEEDBACK_API_URL, payload);
+});
+
+/* TEXT MESSAGES */
 bot.on('message:text', async (ctx) => {
   const { chat, message, from } = ctx;
   const userId = from?.username || from?.id || '🤷‍♂️';
   const recentChat = await getLastChat(chat.id);
-  const usrMessage: ChatMessage = { role: 'user', content: message.text };
+  const usrChatMessage = toChatMessage(message);
   console.log(`%c${userId}:`, 'color: yellow', message.text);
 
   if (!recentChat) {
@@ -109,7 +150,7 @@ bot.on('message:text', async (ctx) => {
   await bot.api.sendChatAction(chat.id, 'typing');
 
   // process model completion
-  const modelResponse = await processChatCompletion(recentChat, usrMessage);
+  const modelResponse = await processChatCompletion(recentChat, usrChatMessage);
   await sendMessage(modelResponse, ctx);
 
   // check grammar
@@ -118,11 +159,12 @@ bot.on('message:text', async (ctx) => {
   // update chat history
   const msgISODate = new Date(message.date * 1000).toISOString();
   const chatHistory = (recentChat.chat as unknown as ChatMessages).messages;
-  chatHistory.push({ ...usrMessage, score, dateTime: msgISODate });
+  chatHistory.push({ ...usrChatMessage, score, dateTime: msgISODate });
   chatHistory.push({ role: 'assistant', content: modelResponse });
   await updateConversation(recentChat.id, { messages: chatHistory });
 });
 
+/* VOICE NOTES */
 bot.on('message:voice', async (ctx) => {
   const { chat, from, message } = ctx;
   const userId = from?.username || from?.id || '🤷‍♂️';
@@ -135,7 +177,7 @@ bot.on('message:voice', async (ctx) => {
   }
   // transcribe audio (update status)
   const { text, fileName } = await getTranscription(fileLink);
-  const usrMessage: ChatMessage = { role: 'user', content: text };
+  const usrChatMessage = toChatMessage({ ...message, text });
   console.log(`%c${userId}:`, 'color: yellow', text);
 
   // check token limit
@@ -145,16 +187,15 @@ bot.on('message:voice', async (ctx) => {
 
   // process completion
   bot.api.sendChatAction(chat.id, 'typing'); // no need to await
-  const modelResponse = await processChatCompletion(recentChat, usrMessage);
+  const modelResponse = await processChatCompletion(recentChat, usrChatMessage);
   await sendMessage(modelResponse, ctx);
 
   // check grammar score
   const { score } = await getGrammarEval(text);
 
   // update chat history
-  const msgISODate = new Date(message.date * 1000).toISOString();
   const chatHistory = (recentChat.chat as unknown as ChatMessages).messages;
-  chatHistory.push({ ...usrMessage, fileName, score, dateTime: msgISODate });
+  chatHistory.push({ ...usrChatMessage, fileName, score });
   chatHistory.push({ role: 'assistant', content: modelResponse });
   await updateConversation(recentChat.id, { messages: chatHistory });
 });

@@ -1,5 +1,6 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { HfInference } from "https://esm.sh/@huggingface/inference@2.6.1";
+import { logger } from './utils/logger.ts';
 import { IGrammarRequest } from "./types/services.ts";
 
 const [, portNum] = (Deno.args[0] || '').split('=');
@@ -17,9 +18,7 @@ const headers = {
   }
 };
 
-const log = (message = '', color = 'white') => {
-  console.log(`%c[Grammar Service]${message}`, `color: ${color}`)
-}
+const log = logger('GRAMMAR');
 
 const getScore = (scores: { label: string, score: number }[]) => {
   const score = scores.find(_score => _score.label === 'LABEL_1')?.score || GRAMMAR_THRESHOLD;
