@@ -6,6 +6,9 @@ sudo apt update
 sudo apt install unzip
 curl -fsSL https://deno.land/x/install/install.sh | sh
 
+# create voice notes dir
+mkdir ./voice_notes
+
 # Create .env
 touch .env
 echo "Insert content for .env file. ctrl-d when done."

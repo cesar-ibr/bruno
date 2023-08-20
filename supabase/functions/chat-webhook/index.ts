@@ -1,7 +1,8 @@
-import { Bot, Context, GrammyError, HttpError } from "https://deno.land/x/grammy@v1.17.2/mod.ts";
-import { supabaseClient } from "./utils/supabase.ts";
-import { Database } from "./types/db.ts"
-import { post } from "./utils/fetch.ts";
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import { Bot, webhookCallback, Context, GrammyError, HttpError } from "https://deno.land/x/grammy@v1.17.2/mod.ts";
+import { supabaseClient } from "../_shared/supabase.ts";
+import { Database } from "../_shared/db.types.ts"
+import { post } from "../_shared/fetch.ts";
 import {
   getChatGPTCompletion,
   getLastChat,
@@ -15,27 +16,39 @@ import {
   ASK_START_CHAT,
   CHAT_LIMIT_MESSAGE,
   getFileLink
-} from './utils/chat.ts';
-import { IASRResponse, IGrammarResponse } from "./types/services.ts"
+} from '../_shared/chat.ts';
+
+/** Types */
+type IGrammarResponse = {
+  input: string;
+  label: string;
+  score: number;
+  output?: string;
+  outputScore?: number;
+}
+
+type IASRResponse = {
+  text: string;
+  fileName: string;
+}
 
 type TChatRecord = Database['public']['Tables']['conversations']['Row'];
 
-// constants
+/** Constants */
 const TELEGRAM_TOKEN = Deno.env.get('TELEGRAM_TOKEN') || '';
 const GRAMMAR_API_URL = Deno.env.get('GRAMMAR_API') ?? '';
 const ASR_API_URL = Deno.env.get('STT_API') ?? '';
 const CHAT_TOKEN_LIMIT = 3500;
+const bot = new Bot(TELEGRAM_TOKEN);
 
+/** Util Functions */
 const tokenOverflow = (tokenUsage: number, text: string) => {
   const totalTokens = tokenUsage + tokensAprox(text);
   console.log('%cToken Usage:', 'color: blue', totalTokens);
   return totalTokens >= CHAT_TOKEN_LIMIT;
 };
 
-/**
- * Gets chat completion without modifying the Chat Record
- * @returns text completion
- */
+// Get chat completion without modifying the Chat Record
 const processChatCompletion = async (chatRecord: TChatRecord, chatMsg: ChatMessage) => {
   const chatHistory = (chatRecord.chat as unknown as ChatMessages).messages;
   const chatForCompletion = [...chatHistory, chatMsg].map(({ role, content }) => ({ role, content }));
@@ -68,11 +81,7 @@ const getGrammarEval = async (input = '') => {
   return results;
 };
 
-
-// New Implementation
-const bot = new Bot(TELEGRAM_TOKEN);
-
-/** Commands */
+/** Bot Commands */
 bot.command('start', async (ctx) => {
   const { from, chat } = ctx;
   const user = from?.username || from?.first_name || from?.id || '';
@@ -90,7 +99,7 @@ bot.command('feedback', async (ctx) => {
   await sendMessage('Sorry, this feature is not available yet 😅', ctx);
 });
 
-/* Text Message */
+/** Text Message */
 bot.on('message:text', async (ctx) => {
   const { chat, message, from } = ctx;
   const userId = from?.username || from?.id || '🤷‍♂️';
@@ -123,6 +132,7 @@ bot.on('message:text', async (ctx) => {
   await updateConversation(recentChat.id, { messages: chatHistory });
 });
 
+/** Voice Message */
 bot.on('message:voice', async (ctx) => {
   const { chat, from, message } = ctx;
   const userId = from?.username || from?.id || '🤷‍♂️';
@@ -159,7 +169,6 @@ bot.on('message:voice', async (ctx) => {
   await updateConversation(recentChat.id, { messages: chatHistory });
 });
 
-
 /* Handle Error */
 bot.catch(({ ctx, error }) => {
   const userId = ctx.from?.username || ctx.from?.id || '🤷‍♂️';
@@ -174,15 +183,16 @@ bot.catch(({ ctx, error }) => {
     .functions
     .invoke('notify', { body: { message, userId, chatId } })
     .catch(() => console.log('Error while sending notification 😥'));
-  // Try to reply to user
+  // Reply to user
   ctx.reply(`🤖💥 There's a technical issue with Bruno at the moment. He'll be back soon 🦾`);
 });
 
+const handleUpdate = webhookCallback(bot, 'std/http')
 
-bot.start({
-  onStart: (botInfo) => {
-    console.log('%c[CHAT] Bot connected!', 'color: green');
-    console.log('[CHAT] Bot Info:', botInfo);
-    console.log('[CHAT] Listening...');
+serve(async (req) => {
+  try {
+    return await handleUpdate(req)
+  } catch (err) {
+    console.error(err)
   }
-});
+})
