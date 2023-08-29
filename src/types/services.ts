@@ -15,6 +15,10 @@ export interface IASRResponse {
   fileName: string;
 }
 
+export interface ITTSResponse {
+  filePath: string;
+}
+
 export interface IFeedbackRequestMessage {
   messageId?: number;
   text: string;

@@ -1,4 +1,4 @@
-import { Bot, Context, GrammyError, HttpError } from "https://deno.land/x/grammy@v1.17.2/mod.ts";
+import { Bot, Context, GrammyError, HttpError, InlineKeyboard, InputFile } from "https://deno.land/x/grammy@v1.17.2/mod.ts";
 import { supabaseClient } from "./utils/supabase.ts";
 import { Database } from "./types/db.ts"
 import { post } from "./utils/fetch.ts";
@@ -16,7 +16,7 @@ import {
   CHAT_LIMIT_MESSAGE,
   getFileLink
 } from './utils/chat.ts';
-import { IASRResponse, IFeedbackRequest, IGrammarResponse } from "./types/services.ts"
+import { IASRResponse, IFeedbackRequest, IGrammarResponse, ITTSResponse } from "./types/services.ts"
 
 type TChatRecord = Database['public']['Tables']['conversations']['Row'];
 
@@ -24,6 +24,7 @@ type TChatRecord = Database['public']['Tables']['conversations']['Row'];
 const TELEGRAM_TOKEN = Deno.env.get('TELEGRAM_TOKEN') || '';
 const GRAMMAR_API_URL = Deno.env.get('GRAMMAR_API') ?? '';
 const ASR_API_URL = Deno.env.get('STT_API') ?? '';
+const TTS_API_URL = Deno.env.get('TTS_API') ?? '';
 const FEEDBACK_API_URL = Deno.env.get('FEEDBACK_API') ?? '';
 const NO_FEEDBACK_YET = `Congrats {{NAME}}! Up until now all your messages look good 👏🥳`;
 const CHAT_TOKEN_LIMIT = 3500;
@@ -49,7 +50,8 @@ const processChatCompletion = async (chatRecord: TChatRecord, chatMsg: ChatMessa
 
 const sendMessage = async (text: string, ctx: Context) => {
   console.log('%cBruno:', 'color: green', text);
-  await ctx.reply(text);
+  const inlineKyb = new InlineKeyboard().text('🔈', '[TTS]');
+  await ctx.reply(text, { reply_markup: inlineKyb });
 }
 
 const getTranscription = async (fileLink: string) => {
@@ -61,6 +63,14 @@ const getTranscription = async (fileLink: string) => {
   } = await post(ASR_API_URL, { link: fileLink }) as IASRResponse;
   console.timeEnd('ASR_TIME');
   return { text, fileName };
+};
+
+const getAudio = async (text: string, id: number) => {
+  console.log('%cGenerating Audio...', 'color: pink');
+  console.time('TTS_TIME');
+  const { filePath = '' } = await post(TTS_API_URL, { text, messageId: id }) as ITTSResponse;
+  console.timeEnd('TTS_TIME');
+  return filePath;
 };
 
 const getGrammarEval = async (input = '') => {
@@ -200,6 +210,21 @@ bot.on('message:voice', async (ctx) => {
   await updateConversation(recentChat.id, { messages: chatHistory });
 });
 
+/** Handle Text to Speech */
+bot.on('callback_query:data', async (ctx) => {
+  // Handle Text-to-Speech only
+  if (ctx.callbackQuery.data !== '[TTS]' || !ctx.chat?.id) {
+    return await ctx.answerCallbackQuery();
+  }
+
+  await ctx.api.sendChatAction(ctx.chat?.id, 'record_voice');
+  const text = ctx.message?.text ?? '';
+  const audioFile = await getAudio(text, ctx.message?.message_id ?? 123);
+  // send text to audio service
+  await ctx.answerCallbackQuery(); // remove loading animaiton
+  // send audio
+  await ctx.replyWithAudio(new InputFile(audioFile));
+});
 
 /* Handle Error */
 bot.catch(({ ctx, error }) => {

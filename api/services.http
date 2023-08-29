@@ -14,6 +14,15 @@ Content-Type: application/json
     "link": "./example_audio/i-will-went.ogg"
 }
 
+### TTS Service
+POST http://{{TTS_SERVER}}/
+Content-Type: application/json
+
+{
+    "text": "Hello! I'm Bruno, your english teacher",
+    "messageId": "12345"
+}
+
 ### Feedback Service
 POST http://{{FEEDBACK_SERVER}}
 Content-Type: application/json

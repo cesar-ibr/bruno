@@ -16,10 +16,12 @@ case $1 in
     ;;
   inference)
     echo "${GREEN}Serving Models${NC}"
-    echo "ASR Model..."
-    nohup deno run --allow-net --allow-env --allow-read --allow-write ./src/asr.service.ts port=8001 & disown
     echo "Grammar Model..."
     nohup deno run --allow-net --allow-env ./src/grammar.service.ts port=8000 & disown
+    echo "ASR Model..."
+    nohup deno run --allow-net --allow-env --allow-read --allow-write ./src/asr.service.ts port=8001 & disown
+    echo "TTS Model..."
+    nohup deno run --allow-net --allow-env --allow-read --allow-write ./src/tts.service.ts port=8002 & disown
     ;;
   chat)
     # kick off Chat service
@@ -29,7 +31,7 @@ case $1 in
   feedback)
     # kick off Chat service
     echo "${GREEN}Starting Feedback Service${NC}"
-    nohup deno run --allow-env --allow-net ./src/feedback.service.ts port=8002 & disown
+    nohup deno run --allow-env --allow-net ./src/feedback.service.ts port=9000 & disown
     ;;
   zip)
     echo "${CYAN}Compressing voice_notes.tar.gz${NC}"
