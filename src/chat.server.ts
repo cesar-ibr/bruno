@@ -30,6 +30,8 @@ const NO_FEEDBACK_YET = `Congrats {{NAME}}! Up until now all your messages look 
 const CHAT_TOKEN_LIMIT = 3500;
 const GRAMMAR_LOW_SCORE = 80;
 
+const bot = new Bot(TELEGRAM_TOKEN);
+
 const tokenOverflow = (tokenUsage: number, text: string) => {
   const totalTokens = tokenUsage + tokensAprox(text);
   console.log('%cToken Usage:', 'color: blue', totalTokens);
@@ -47,12 +49,6 @@ const processChatCompletion = async (chatRecord: TChatRecord, chatMsg: ChatMessa
   await updateTokenUsage(chatRecord.id, tokens);
   return text;
 };
-
-const sendMessage = async (text: string, ctx: Context) => {
-  console.log('%cBruno:', 'color: green', text);
-  const inlineKyb = new InlineKeyboard().text('🔈', '[TTS]');
-  await ctx.reply(text, { reply_markup: inlineKyb });
-}
 
 const getTranscription = async (fileLink: string) => {
   console.log('%cTranscribing file...', 'color: pink');
@@ -92,12 +88,29 @@ const toChatMessage = (message: NonNullable<Context['message']>): ChatMessage =>
   };
 }
 
-const bot = new Bot(TELEGRAM_TOKEN);
+const sendRecordingStatus = (chatId: number) => setInterval(() => bot.api.sendChatAction(chatId, 'record_voice'), 5000);
+
+const sendMessage = async (text: string, ctx: Context, withAudio = false) => {
+  console.log('%cBruno:', 'color: green', text.substring(0, 200), '...');
+  // const inlineKyb = new InlineKeyboard().text('👂 Listen', '[TTS]');
+  if (!withAudio) {
+    return await ctx.reply(text);
+  }
+  // include audio
+  const intvl = sendRecordingStatus(ctx.chat?.id ?? 0);
+  const audioFile = await getAudio(text ?? '', ctx.message?.message_id ?? 0);
+  clearInterval(intvl);
+  await ctx.api.sendVoice(
+    ctx.chat?.id ?? 0,
+    new InputFile(audioFile),
+    { caption: text.substring(0, 1000) }
+  );
+}
 
 /** Commands */
 bot.command('start', async (ctx) => {
   const { from, chat } = ctx;
-  const user = from?.username || from?.first_name || from?.id || '';
+  const user = from?.first_name || from?.username || from?.id || '';
   const userName = String(user).replaceAll(' ', '');
   const response = await insertNewConversation(chat.id, userName);
   console.log('%cBruno:', 'color: green', response);
@@ -161,7 +174,7 @@ bot.on('message:text', async (ctx) => {
 
   // process model completion
   const modelResponse = await processChatCompletion(recentChat, usrChatMessage);
-  await sendMessage(modelResponse, ctx);
+  await sendMessage(modelResponse, ctx, true);
 
   // check grammar
   const { score } = await getGrammarEval(message.text);
@@ -198,7 +211,7 @@ bot.on('message:voice', async (ctx) => {
   // process completion
   bot.api.sendChatAction(chat.id, 'typing'); // no need to await
   const modelResponse = await processChatCompletion(recentChat, usrChatMessage);
-  await sendMessage(modelResponse, ctx);
+  await sendMessage(modelResponse, ctx, true);
 
   // check grammar score
   const { score } = await getGrammarEval(text);
@@ -213,17 +226,19 @@ bot.on('message:voice', async (ctx) => {
 /** Handle Text to Speech */
 bot.on('callback_query:data', async (ctx) => {
   // Handle Text-to-Speech only
-  if (ctx.callbackQuery.data !== '[TTS]' || !ctx.chat?.id) {
+  const { data, message } = ctx.callbackQuery;
+  if (data !== '[TTS]' || !message) {
     return await ctx.answerCallbackQuery();
   }
 
-  await ctx.api.sendChatAction(ctx.chat?.id, 'record_voice');
-  const text = ctx.message?.text ?? '';
-  const audioFile = await getAudio(text, ctx.message?.message_id ?? 123);
+  await ctx.api.sendChatAction(message.chat.id, 'record_voice');
+  const audioFile = await getAudio(message.text ?? '', message.message_id);
   // send text to audio service
-  await ctx.answerCallbackQuery(); // remove loading animaiton
   // send audio
-  await ctx.replyWithAudio(new InputFile(audioFile));
+  await ctx.api.sendVoice(message.chat.id, new InputFile(audioFile), { caption: message.text });
+  // await ctx.replyWithAudio(new InputFile(audioFile));
+  // await ctx.replyWithVoice(new InputFile(audioFile), { caption: message.text });
+  await ctx.answerCallbackQuery(); // remove loading animaiton
 });
 
 /* Handle Error */

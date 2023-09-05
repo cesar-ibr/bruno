@@ -32,15 +32,14 @@ type TRequest = {
 };
 
 const handler = async (req: Request): Promise<Response> => {
-  // receive download link
   const { text, messageId } = await req.json() as TRequest;
   if (!text) {
-    return errorResponse('Download link is required', 400);
+    return errorResponse('Text is required', 400);
   }
 
   const fileName = `audio_${messageId}.mp3`;
   const filePath = AUDIO_FOLDER.concat(fileName);
-  log(`Text: ${text}`, 'yellow');
+  log(`Text: ${text.substring(0, 100)}...`, 'yellow');
 
   // transforming text to audio
   log('Infering...');
