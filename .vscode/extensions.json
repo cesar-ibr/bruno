@@ -1,6 +1,3 @@
 {
-  "recommendations": [
-    "patmood.rich-markdown-editor",
-    "humao.rest-client"
-  ]
+  "recommendations": ["humao.rest-client"]
 }

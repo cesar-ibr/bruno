@@ -108,10 +108,10 @@ signal-exit@^4.0.1:
   resolved "https://registry.yarnpkg.com/signal-exit/-/signal-exit-4.1.0.tgz#952188c1cbd546070e2dd20d0f41c0ae0530cb04"
   integrity sha512-bzyZ1e88w9O1iNJbKnOlvYTrWPDl46O1bG0D3XInv+9tkPrxrN8jUUTiFlDkkmKWgn1M6CfIA13SuGqOa9Korw==
 
-supabase@^1.86.2:
-  version "1.86.2"
-  resolved "https://registry.yarnpkg.com/supabase/-/supabase-1.86.2.tgz#3de5832d9fe25851c0c75d461ee7d18c473dd898"
-  integrity sha512-8tgQYTRxoo+XVnQPSsbEYeb7Ag8GSqvFTDdO/KiegIsBOiN5y4UV+s2G9/BJMdiAU+wyGmSStmy29X+yRHwS5g==
+supabase@^1.88.0:
+  version "1.88.0"
+  resolved "https://registry.yarnpkg.com/supabase/-/supabase-1.88.0.tgz#0785f382a698b99c3df89608b62d790c65dcc59c"
+  integrity sha512-eyfgSkLVauPRFOiTtddC/v3TFPTTlOwSur5Qh2s/kR/ZWMCySEYQ2E1+lsGvMSwP+SYpaDrYUICkb5CiaIZKow==
   dependencies:
     bin-links "^4.0.1"
     node-fetch "^3.2.10"
