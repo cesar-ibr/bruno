@@ -1,6 +1,8 @@
 # Define TELEGRAM_TOKEN in settings
 # Check https://github.com/Huachao/vscode-restclient#system-variables
 
+@myChatId = 1878312143
+
 ### Set WebHook
 GET https://api.telegram.org/bot{{TELEGRAM_TOKEN}}/setWebhook
     ?url=https://qnvwpmtvyplwcgctxjty.supabase.co/functions/v1/automatic-reply
@@ -13,6 +15,6 @@ POST https://api.telegram.org/bot{{TELEGRAM_TOKEN}}/sendMessage
 Content-Type: application/json
 
 {
-    "chat_id": 1878312143,
-    "text": "Hello 👋"
+    "chat_id": {{myChatId}},
+    "text": "Hello!"
 }
